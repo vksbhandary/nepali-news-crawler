@@ -1,13 +1,17 @@
 import scrapy
 import json
 from django.utils.html import strip_tags
-# scrapy crawl wordpress_news -o news24nepal.csv -t csv
-# scrapy crawl wordpress_news -o nepalitribune.csv -t csv
-# curl http://demo.wp-api.org/wp-json/wp/v2/posts
-# scrapy crawl news_pahilo -o file.csv -t csv
-# ["https://www.news24nepal.tv/", "https://nepalitribune.com/", 'https://www.nepalitimes.com/']
-# https://hamrakura.com   nav > ul > li:last-child > a
-# https://hamrakura.com/category.php?_Id=1&p=9
+
+
+'''
+Bot logic:
+This scraper uses wordpress's REST API to fetch news items. So this scraper logic can be used on any wordpress site if REST APIs are working.
+In order to check if a wordpress site can be scraped using this logic.
+
+1. Go to `yourdomainname.com`/wp-json/wp/v2/posts/
+2. If you see a bunch of Json data then its good to go
+3. If you see 404 error page or forbidden error page then its not supported.
+'''
 
 class wordpressSpider(scrapy.Spider):
     name = "wordpress_news"
@@ -20,14 +24,12 @@ class wordpressSpider(scrapy.Spider):
     def start_requests(self):
         yield scrapy.Request(url=self.domain+'wp-json/wp/v2/categories?per_page=100', callback=self.get_categories)
 
-    # def set_total_news(self, total):
 
     def get_post_count(self, response):
         x = response.headers.getlist("x-wp-total")
         print(int(x[0]))
         total = int(x[0])
-        # self.set_total_news(int(x[0]))
-        # self.get_news(response)
+
         print("calling set_total_news")
         self.total_news = total
         pages = int(self.total_news/25)+2
@@ -38,7 +40,7 @@ class wordpressSpider(scrapy.Spider):
 
 
     def get_categories(self, response):
-        # yield scrapy.Request(url=self.domain+'http://www.pahilopost.com/archive/{}?year=&month=&day='.format(i), callback=self.parse)
+
         jsonresponse = json.loads(response.body_as_unicode())
 
         self.categories
@@ -47,11 +49,9 @@ class wordpressSpider(scrapy.Spider):
             self.categories[cat['id']]['title']= cat['name']
             self.categories[cat['id']]['count']= cat['count']
             self.categories[cat['id']]['crawlled'] = 0
-            # self.total_news = self.total_news + cat['count']
 
         yield scrapy.Request(url=self.domain+'wp-json/wp/v2/posts?per_page=1&page=1', callback=self.get_post_count)
-        # 113505
-        # self.set_total_news(113505)
+
 
 
     def return_all_cat(self,catids):
@@ -65,12 +65,6 @@ class wordpressSpider(scrapy.Spider):
                 str = str + " , "
 
         return str
-
-    # def all_news_fetched():
-    #     resp =  True
-    #     for key in self.categories.keys():
-    #         resp = resp and self.categories[key]['crawlled'] == self.categories[key]['count']
-    #     return  resp
 
     def get_news(self, response):
         news_json = json.loads(response.body_as_unicode())

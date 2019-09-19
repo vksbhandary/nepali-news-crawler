@@ -1,10 +1,10 @@
 import scrapy
-# scrapy crawl <spider name> -o file.csv -t csv
-# curl http://demo.wp-api.org/wp-json/wp/v2/posts
-# scrapy crawl news_pahilo -o file.csv -t csv
-# ["https://www.news24nepal.tv/", "https://nepalitribune.com/", 'https://www.nepalitimes.com/']
-# https://hamrakura.com   nav > ul > li:last-child > a
-# https://hamrakura.com/category.php?_Id=1&p=9
+
+'''
+Bot logic:
+This scraper fetches news from archives. After inspection we have total of 61851 archive items at the time of creation.
+This number will always increase as the time processes so please update this number by visiting link http://www.pahilopost.com/archive/?year=&month=&day= .
+'''
 class pahiloSpider(scrapy.Spider):
     name = "news_pahilo"
 

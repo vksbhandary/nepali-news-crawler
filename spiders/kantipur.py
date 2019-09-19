@@ -4,14 +4,17 @@ from django.utils.html import strip_tags
 from datetime import datetime
 from django.utils.html import strip_tags
 from urllib.parse import urlsplit
-# scrapy crawl kanti_news -o kantipur.csv -t csv
-# scrapy crawl kanti_news -o news24nepal.csv -t csv
-# curl http://demo.wp-api.org/wp-json/wp/v2/posts
-# scrapy crawl news_pahilo -o file.csv -t csv
-# https://www.kantipurdaily.com/news/2015/07/30?json=true
+
 from scrapy.selector import Selector
 from datetime import datetime, timedelta
 
+'''
+Bot logic:
+This scraper uses dated links to fetch all the news items.
+The website generally has a structure of https://www.kantipurdaily.com/categoryName/todaysDate
+This link lets us fetch the news of category categoryName and date todaysDate.
+So the scraper start scraping from today's date and stops at start_date as defined at line 46.
+'''
 
 class kantiSpider(scrapy.Spider):
     name = "kanti_news"
@@ -60,7 +63,7 @@ class kantiSpider(scrapy.Spider):
 
 
         for cat in self.categories.keys():
-            # self.headers['Referer'] = "{}{}".format(self.domain,cat)
+
             yield scrapy.Request(url="{}/{}/{}".format(self.domain,cat,date_str), callback=self.get_categories)
 
     def get_categories(self, response):
@@ -69,8 +72,7 @@ class kantiSpider(scrapy.Spider):
         news_crawled = 0
         for article in response.css('article'):
                 url = article.css("h2 a::attr(href)").extract_first()
-                # print(url)
-                # self.total_news = self.total_news + cat['count']
+
                 self.categories[cat]["crawled"]+= 1
                 news_crawled += 1
                 yield scrapy.Request(url="{}{}".format(self.domain,url), callback=self.get_news)

@@ -1,12 +1,11 @@
 import scrapy
 import urllib.parse as urlparse
 
-# scrapy crawl news_hamrakura -o hamrakura.csv -t csv
-# curl http://demo.wp-api.org/wp-json/wp/v2/posts
-# scrapy crawl news_pahilo -o file.csv -t csv
-# ["https://www.news24nepal.tv/", "https://nepalitribune.com/", 'https://www.nepalitimes.com/']
-# https://hamrakura.com   nav > ul > li:last-child > a
-# https://hamrakura.com/category.php?_Id=1&p=9
+'''
+Bot logic:
+The website has category Ids ranging from 1 to 22 (might be more because of multiple heirarchy).
+So this scraper fetches the links from each category page and extracts news data from news page.
+'''
 class hamrakura(scrapy.Spider):
     name = "news_hamrakura"
     categories = {}
@@ -36,10 +35,7 @@ class hamrakura(scrapy.Spider):
             yield scrapy.Request(url=link, callback=self.get_news)
 
     def get_news(self, response):
-        # content = ""
-        # title = response.css("h1.uk-heading-large::text").extract_first()
-        # for article in response.css("div.content *::text").extract():
-        #     content = content +" "+article
+
         yield{
         'url':  response.request.url ,
         'title': response.css("h1.page-title::text").extract_first(),
