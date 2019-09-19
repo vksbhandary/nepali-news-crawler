@@ -22,10 +22,7 @@ class pahiloSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.get_news)
 
     def get_news(self, response):
-        # content = ""
-        # title = response.css("h1.uk-heading-large::text").extract_first()
-        # for article in response.css("div.content *::text").extract():
-        #     content = content +" "+article
+
         yield{
         'title': response.css("h1.uk-heading-large::text").extract_first(),
         'content': " ".join(response.css("div.content *::text").getall()),

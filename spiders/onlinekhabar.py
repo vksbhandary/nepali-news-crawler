@@ -9,7 +9,6 @@ Simple scrapy bot logic which starts at starting URLS and ends when there are no
 
 class onlinekhabar(scrapy.Spider):
     name = "news_onlinekhabar"
-    domain = "https://www.kantipurdaily.com"
     categories = {}
     url_cat = {}
     initurls = [
