@@ -77,8 +77,10 @@ $ scrapy crawl news_hamrakura -o hamrakura.csv -t csv
     ```$ scrapy crawl wordpress_news -o news24nepal.csv -t csv```
     
 
-<sup>2</sup> In order to check if a wordpress website is supported by this crwaler
+<sup>2</sup> This crawler uses wordpress's RESTful API to fetch posts. Therefore a website should have enabled REST API for this crawler to work. In order to check if a wordpress website is supported by this crwaler
 
 1. Go to `yourdomainname.com`/wp-json/wp/v2/posts/
 1. If you see a bunch of Json data then its good to go
 1. If you see 404 error page or forbidden error page then its not supported.
+
+
